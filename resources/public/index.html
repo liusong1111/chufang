@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>连连看</title>
+
+    <!-- Sets initial viewport load and disables zooming  -->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+    <!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <!-- Include the compiled Ratchet CSS -->
+    <link href="css/ratchet.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <script src="js/hammer-2.0.4.js"></script>
+    <style>
+        #matrix .items {
+            -webkit-column-count: 4;
+            column-count: 4;
+        }
+
+        #matrix .items .item {
+            /*width: 200px;*/
+            /*height: 100px;*/
+            /*width: 25%;*/
+            /*height: 25%;*/
+            display: block;
+            z-index:1;
+            border: 2px solid transparent;
+        }
+
+        #matrix .items .item.selected {
+            border-color: #f00;
+        }
+
+    </style>
+</head>
+<body>
+<header class="bar bar-nav">
+    <h1 class="title">药品连连看</h1>
+    <button>重来</button>
+</header>
+
+<nav class="bar bar-tab" id="item-description">
+    药品名：党参
+    功能主治：味甘，性平，归脾、肺经，具有补中益气、健脾益肺的功效
+    性状：为类圆形或椭圆形厚片或小段。切面黄白色或淡黄棕色，有裂隙和菊花纹，中央有淡黄色圆心，周边淡黄白色或黄棕色，有纵皱纹。有特殊香气，味微甜。
+</nav>
+
+<div class="content">
+    <div id="matrix">
+
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

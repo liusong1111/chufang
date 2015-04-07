@@ -1,0 +1,17 @@
+{
+    "name": "连连看",
+    "xwalk_version": "0.0.0.1",
+    "start_url": "index.html",
+    "xwalk_hosts": [
+        "http://*/",
+        "https://*/"
+    ],
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "density": "4.0"
+        }
+    ]
+}
