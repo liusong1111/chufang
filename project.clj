@@ -77,9 +77,7 @@
 
             :clean-targets ^{:protect false} ["resources/public/js"]
 
-            :minify-assets
-            {:assets
-             {"resources/public/css/site.min.css" "resources/public/css/site.css"}}
+            :minify-assets {}
 
             :cljsbuild {:builds {:app {:source-paths ["src/cljs"]
                                        :compiler     {:output-to     "resources/public/js/app.js"
