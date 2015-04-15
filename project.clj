@@ -9,10 +9,12 @@
             :dependencies [[org.clojure/clojure "1.6.0"]
                            [org.clojure/core.async "0.1.346.0-17112a-alpha"]
 
-                           [cljsjs/react "0.12.2-5"]
-                           [reagent "0.5.0-alpha3"]
+                           ;[cljsjs/react "0.12.2-5"]
+
                            [reagent-forms "0.4.4"]
                            [reagent-utils "0.1.3"]
+                           [reagent "0.5.0" :exclusions [cljsjs/react]]
+                           [cljsjs/react-with-addons "0.12.2-4"]
                            [secretary "1.2.2"]
                            [org.clojure/clojurescript "0.0-3058" :scope "provided"]
                            [cljs-ajax "0.3.10"]
