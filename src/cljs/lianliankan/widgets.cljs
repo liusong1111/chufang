@@ -3,6 +3,49 @@
               [lianliankan.data :as data]
               ))
 
+
+; for layout
+(def pair-capacity (atom 16))
+(def item-size (atom 100))
+(def description-style (atom {}))
+(def content-style (atom {}))
+
+; layout!
+(defn layout! []
+    (let [body (-> js/document .-body)
+          w (.-clientWidth body)
+          h (- (.-clientHeight body) 60)
+
+          ;w (- w (* 3 12))
+          img-size (quot (min w h) 4)
+          -pair-capacity (* 2 (if (> w h) 4 (quot (- h 200) img-size)))
+          ]
+        (reset! item-size img-size)
+        (if (> h w)
+            (reset! description-style {
+                                       :height   200
+                                       :width    "100%"
+                                       :bottom   0
+                                       :position "fixed"
+                                       })
+            (do
+                (reset! description-style {
+                                           :height "100%"
+                                           :width  (- w (* img-size 4))
+                                           :top    44
+                                           :left   (* img-size 4)
+
+                                           })
+                (reset! content-style {
+                                       :padding-right (- w (* img-size 4))
+                                       })
+                )
+            )
+        (reset! pair-capacity -pair-capacity)
+        )
+    )
+
+
 ;store
 (def items (atom []))
 (def selected-item (atom nil))
@@ -10,7 +53,7 @@
 (def timing-ref (atom nil))
 
 (defn ^:export new-game []
-    (reset! items (data/sample-data))
+    (reset! items (data/sample-data @pair-capacity))
     (reset! selected-item nil)
 
     (reset! timing 0)
@@ -49,6 +92,10 @@
                 :src      (if (:blank item) "blank.jpg" (str "pics/" (:name item) ".jpg"))
                 :on-click #(on-item-click item)
                 :class    (if (= item @selected-item) "selected")
+                :style    {
+                           :width  @item-size
+                           :height @item-size
+                           }
                 }]
     )
 
@@ -120,7 +167,7 @@
       (if (pos? @timing)
           [timing-view]
           )
-      [:a.btn.btn-nav.pull-right
+      [:a.btn.btn-nav.btn-negative.pull-right
        {
         :on-click new-game
         }
@@ -129,9 +176,7 @@
      (if (and @selected-item (not (:blank @selected-item)))
          [:nav.bar.bar-tab.description
           {
-           :style {
-                   :height 200
-                   }
+           :style @description-style
            }
           [:span.field.name (:name @selected-item)]
           [:div
@@ -146,6 +191,9 @@
          )
 
      [:div.content
+      {
+       :style @content-style
+       }
       [:div#matrix
        (if (every? #(:blank %) @items)
            [game-summary]
@@ -160,6 +208,6 @@
     (let [ele (.getElementById js/document "main")]
         (reagent/render-component [page-main] ele)
         )
-
+    (layout!)
     (new-game)
     )

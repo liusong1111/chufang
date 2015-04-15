@@ -303,16 +303,8 @@
     (= (data-pair-hash name1) name2)
     )
 
-;(defn find-paired-entry [name1]
-;    (let [name2 (data-pair-hash name1)
-;          entry (data-hash name2)
-;          ]
-;        entry
-;        )
-;    )
-
 ; 得到8对16个随机药品
-(defn sample-data []
-    (map #(data-hash %) (shuffle (flatten (take 2 (shuffle data-pair)))))
+(defn sample-data [pair-count]
+    (map #(data-hash %) (shuffle (flatten (take pair-count (shuffle data-pair)))))
     )
 
