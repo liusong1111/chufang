@@ -97,9 +97,9 @@
           is-paired? (data/paired? (:name item) (:name s))
           ]
         (reset! selected-item item)
-        (println "matching:" (:name item) "-" (:name s) "-" is-paired?)
+        ;(println "matching:" (:name item) "-" (:name s) "-" is-paired?)
         (when is-paired?
-            (println "matched:" (:name item) "-" (:name s))
+            ;(println "matched:" (:name item) "-" (:name s))
             (reset! items (replace {s (nil-item) item (nil-item)} @items))
             )
         (check-all-clear)
