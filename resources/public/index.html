@@ -24,7 +24,7 @@
 
         #matrix .items .item {
             /*width: 200px;*/
-            /*height: 100px;*/
+            height: 100px;
             /*width: 25%;*/
             /*height: 25%;*/
             display: block;
@@ -36,25 +36,41 @@
             border-color: #f00;
         }
 
+        .description {
+            font-size: 12px;
+        }
+        .field {
+            font-weight: bold;
+            color: #00f;
+        }
+        .field.name {
+            color: #f00;
+            font-size: 120%;
+        }
+
+
     </style>
 </head>
 <body>
-<header class="bar bar-nav">
-    <h1 class="title">药品连连看</h1>
-    <button>重来</button>
-</header>
+<div id="main">
 
-<nav class="bar bar-tab" id="item-description">
-    药品名：党参
-    功能主治：味甘，性平，归脾、肺经，具有补中益气、健脾益肺的功效
-    性状：为类圆形或椭圆形厚片或小段。切面黄白色或淡黄棕色，有裂隙和菊花纹，中央有淡黄色圆心，周边淡黄白色或黄棕色，有纵皱纹。有特殊香气，味微甜。
-</nav>
-
-<div class="content">
-    <div id="matrix">
-
-    </div>
 </div>
+<!--<header class="bar bar-nav">-->
+    <!--<h1 class="title">药品连连看</h1>-->
+    <!--<button onclick="lianliankan.widgets.new_game()">重来</button>-->
+<!--</header>-->
+
+<!--<nav class="bar bar-tab" id="item-description">-->
+    <!--药品名：党参-->
+    <!--功能主治：味甘，性平，归脾、肺经，具有补中益气、健脾益肺的功效-->
+    <!--性状：为类圆形或椭圆形厚片或小段。切面黄白色或淡黄棕色，有裂隙和菊花纹，中央有淡黄色圆心，周边淡黄白色或黄棕色，有纵皱纹。有特殊香气，味微甜。-->
+<!--</nav>-->
+
+<!--<div class="content">-->
+    <!--<div id="matrix">-->
+
+    <!--</div>-->
+<!--</div>-->
 
 <script src="js/app.js"></script>
 </body>
