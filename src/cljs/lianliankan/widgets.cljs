@@ -1,28 +1,28 @@
 (ns lianliankan.widgets
     (:require [reagent.core :as reagent :refer [atom]]
               [lianliankan.data :as data]
-              [cljsjs.react :as React]
+              ;[cljsjs.react :as React]
               ))
 
 ; for animation
-(def css-transition-group
-    (reagent/adapt-react-class js/React.addons.CSSTransitionGroup))
+;(def css-transition-group
+;    (reagent/adapt-react-class js/React.addons.CSSTransitionGroup))
 
-(def animation-style "
-.foo-enter {
-  height: 0;
-  transition: height 0.27s ease-out;
-}
-
-.foo-leave {
-  height: 0;
-  transition: height 0.27s ease-out;
-}
-
-.foo-enter-active {
-  height: 2em;
-  opacity: 1;
-}")
+;(def animation-style "
+;.foo-enter {
+;  height: 0;
+;  transition: height 0.27s ease-out;
+;}
+;
+;.foo-leave {
+;  height: 0;
+;  transition: height 0.27s ease-out;
+;}
+;
+;.foo-enter-active {
+;  height: 2em;
+;  opacity: 1;
+;}")
 
 ; for layout
 (def pair-capacity (atom 16))
@@ -173,8 +173,13 @@
 
 (defn matrix-view []
     [:div
-     [:style animation-style]
+     ;[:style animation-style]
      [:div.items
+      {
+       :style {
+               :width (* @item-size 4)
+               }
+       }
       ;[css-transition-group {:transition-name "foo"}
        (for [item @items]
            ^{:key (:name item)} [item-view item]
