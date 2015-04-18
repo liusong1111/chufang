@@ -7,7 +7,7 @@
             )
     )
 
-(enable-console-print!)
+;(enable-console-print!)
 
 ;(figwheel/watch-and-reload
 ;  :websocket-url "ws://localhost:3449/figwheel-ws"
@@ -19,4 +19,7 @@
 
 (widgets/run)
 
+;(defn -main []
+;    (widgets/run)
+;    )
 ;(store/fetch_moments)

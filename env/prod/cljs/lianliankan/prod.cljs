@@ -2,7 +2,7 @@
     (:require [lianliankan.widgets :as widgets]
               ))
 
-(enable-console-print!)
+;(enable-console-print!)
 
 (widgets/run)
 

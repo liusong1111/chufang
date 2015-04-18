@@ -115,6 +115,7 @@
 
                                     :cljsbuild    {:builds {:app {:source-paths ["env/dev/cljs"]
                                                                   :compiler     {:main       "lianliankan.dev"
+                                                                                 :asset-path "js/out"
                                                                                  :source-map true}}
                                                             }
                                                    }}
