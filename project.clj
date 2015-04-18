@@ -64,7 +64,25 @@
                       [lein-environ "1.0.0"]
                       [lein-ring "0.9.1"]
                       [lein-bin "0.3.4"]
-                      [lein-asset-minifier "0.2.2"]]
+                      [lein-asset-minifier "0.2.2"]
+                      [lein-node-webkit-build "0.1.7"]]
+
+            ;lein node-webkit-build
+            :node-webkit-build {
+                                :root "resources/public"
+                                ;:name nil ; use this to override the application name
+                                ;:version nil ; use this to override the application version
+                                :osx {
+                                      :icon nil ; point to an .icns icon file to be used on the generated mac osx build
+                                      }
+                                ;:platforms #{:osx :osx64 :win :linux32 :linux64} ; select which platforms to generate the build
+                                :platforms #{:win} ; select which platforms to generate the build
+                                :nw-version :latest ; the node-webkit version to be used
+                                :output "releases" ; output directory for the generated builds
+                                ;:disable-developer-toolbar true ; this will update your package.json to remove the developer toolbar
+                                :use-lein-project-version true ; update the project version using your leiningen project version
+                                ;:tmp-path (path-join "tmp" "nw-build")
+                                }
 
             :ring {:handler      lianliankan.handler/app
                    :init         lianliankan.handler/init

@@ -15,4 +15,6 @@ pom.xml.asc
 /.repl
 *.log
 /photos
+tmp/**
+releases/**
 
