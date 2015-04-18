@@ -1,0 +1,26 @@
+{
+  "main": "index.html",
+  "name": "药品连连看",
+  "description": "药品连连看",
+  "version": "0.1.0",
+  "keywords": [
+    "药品",
+    "连连看"
+  ],
+  "window": {
+    "title": "药品连连看",
+    "icon": "icon.jpg",
+    "toolbar": false,
+    "frame": true,
+    "width": 1024,
+    "height": 768,
+    "position": "mouse",
+    "min_width": 1024,
+    "min_height": 768,
+    "max_width": 1024,
+    "max_height": 768
+  },
+  "webkit": {
+    "plugin": false
+  }
+}
