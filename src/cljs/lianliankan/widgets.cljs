@@ -109,7 +109,7 @@
 
 (defn item-view [item]
     [:img.item {
-                :src      (if (:blank item) "blank.jpg" (str "pics/" (:name item) ".jpg"))
+                :src      (if (:blank item) "blank.jpg" (str "pics/" (:filename item) ".jpg"))
                 :on-click #(on-item-click item)
                 :class    (if (= item @selected-item) "selected")
                 :style    {

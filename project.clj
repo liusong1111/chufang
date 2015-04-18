@@ -10,7 +10,7 @@
                            [org.clojure/core.async "0.1.346.0-17112a-alpha"]
 
                            ;[cljsjs/react "0.12.2-5"]
-
+                           [com.github.stuxuhai/jpinyin "1.0"]
                            [reagent-forms "0.4.4"]
                            [reagent-utils "0.1.3"]
                            [reagent "0.5.0" :exclusions [cljsjs/react]]
