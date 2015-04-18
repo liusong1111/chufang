@@ -8,9 +8,9 @@
     ],
     "icons": [
         {
-            "src": "icon.png",
+            "src": "icon.jpg",
             "sizes": "128x128",
-            "type": "image/png",
+            "type": "image/jpeg",
             "density": "4.0"
         }
     ]
