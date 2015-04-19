@@ -91,8 +91,8 @@
     )
 
 (defn slice-img-src [slice]
-    ;(if (nil? slice) "blank.jpg" (str "pics/" (:recipe-filename @current-recipe) "/" (:slice-filename slice) ".jpg"))
-    (if (nil? slice) "blank.jpg" (str "pics/" (:recipe @current-recipe) "/" (:slice-name slice) ".jpg"))
+    (if (nil? slice) "blank.jpg" (str "pics/" (:recipe-filename @current-recipe) "/" (:slice-filename slice) ".jpg"))
+    ;(if (nil? slice) "blank.jpg" (str "pics/" (:recipe @current-recipe) "/" (:slice-name slice) ".jpg"))
     )
 
 (defn selected-slice-view [selected-slice slice]

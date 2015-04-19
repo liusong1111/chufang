@@ -3,7 +3,9 @@
               [clojure.java.io :as io]
               [clojure.pprint :refer :all]
               )
-    (:import (com.github.stuxuhai.jpinyin PinyinHelper PinyinFormat))
+    (:import (com.github.stuxuhai.jpinyin PinyinHelper PinyinFormat)
+             (org.apache.commons.io FileUtils FilenameUtils)
+             (java.io File))
     )
 (defn cn->en [filename]
     (PinyinHelper/convertToPinyinString filename "" PinyinFormat/WITHOUT_TONE)
@@ -37,9 +39,10 @@
                              }
                             )
                         ) data)
-          data (vec data)
+          data (vec (rest data))
           ]
         data
+
         ;(pprint data1)
         )
     )
@@ -47,18 +50,35 @@
 (def data (fetch-data))
 
 ;; todo
-;(defn copy-pics []
-;    (doall (for [recipe data]
-;               (try
-;                   (io/copy (io/file (str "doc/连连看游戏/" name ".jpg")) (io/file (str "resources/public/pics/" filename ".jpg")))
-;                   (catch Exception e
-;                       (println "filename not found: " (str "doc/连连看游戏/" name ".jpg"))
-;                       ))
-;               ))
-;
-;    )
+(defn copy-pics []
+    (doall (for [recipe data]
+               (try
+                   (FileUtils/forceMkdir (File. (str "resources/public/pics/" (:recipe-filename recipe))))
+                   (doall (for [slice (:slices recipe)
+                                :let [slices (if (clojure.string/blank? (:option-slice slice))
+                                                 [slice]
+                                                 [slice {:slice-name (:option-slice slice) :slice-filename (:option-slice-filename slice)}])]
+                                s slices
+                                ]
+                              (let [source-filename (str "doc/处方/" (:recipe recipe) "/" (:slice-name s) ".jpg")
+                                    source-file (io/file source-filename)
+                                    exists? (.exists source-file)
+                                    ]
+                                  (if (not exists?)
+                                      (println (str (:recipe recipe) "/" (:slice-name s) ".jpg"))
+                                      (io/copy source-file (io/file (str "resources/public/pics/" (:recipe-filename recipe) "/" (:slice-filename s) ".jpg")))
+                                      ;(println "File OK:" source-filename)
+                                      )
+                                  )
+                              ))
+                   (catch Exception e
+                       (println e)
+                       ))
+               ))
+
+    )
 
 (defn -main []
-    (pprint data)
-    ;(copy-pics)
+    ;(pprint data)
+    (copy-pics)
     )

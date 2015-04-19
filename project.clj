@@ -9,6 +9,8 @@
             :dependencies [[org.clojure/clojure "1.6.0"]
                            [org.clojure/core.async "0.1.346.0-17112a-alpha"]
 
+                           [org.apache.commons/commons-io "1.3.2"]
+
                            ;[cljsjs/react "0.12.2-5"]
                            [com.github.stuxuhai/jpinyin "1.0"]
                            [reagent-forms "0.4.4"]

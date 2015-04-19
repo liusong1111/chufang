@@ -48,8 +48,8 @@
                          :dosage                "6g",
                          :option-slice          "桂皮",
                          :option-slice-filename "guipi"}
-                        {:slice-name            "_苦杏仁",
-                         :slice-filename        "_kuxingren",
+                        {:slice-name            "燀苦杏仁",
+                         :slice-filename        "chankuxingren",
                          :dosage                "6g",
                          :option-slice          "苦杏仁",
                          :option-slice-filename "kuxingren"}
@@ -68,8 +68,8 @@
                          :dosage                "9g",
                          :option-slice          "蜜炙麻黄",
                          :option-slice-filename "mizhimahuang"}
-                        {:slice-name            "_苦杏仁",
-                         :slice-filename        "_kuxingren",
+                        {:slice-name            "燀苦杏仁",
+                         :slice-filename        "chankuxingren",
                          :dosage                "9g",
                          :option-slice          "苦杏仁",
                          :option-slice-filename "kuxingren"}
@@ -208,8 +208,8 @@
       :source          "伤寒论",
       :treat           "破瘀泄热，兼以攻下。主治下焦蓄血证",
       :slices
-                       [{:slice-name            "_桃仁",
-                         :slice-filename        "_taoren",
+                       [{:slice-name            "燀桃仁",
+                         :slice-filename        "chantaoren",
                          :dosage                "12g",
                          :option-slice          "生桃仁",
                          :option-slice-filename "shengtaoren"}
@@ -248,8 +248,8 @@
                          :dosage                "9g",
                          :option-slice          "酒川芎",
                          :option-slice-filename "jiuchuanxiong"}
-                        {:slice-name            "_桃仁",
-                         :slice-filename        "_taoren",
+                        {:slice-name            "燀桃仁",
+                         :slice-filename        "chantaoren",
                          :dosage                "6g",
                          :option-slice          "桃仁",
                          :option-slice-filename "taoren"}
