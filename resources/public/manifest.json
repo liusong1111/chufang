@@ -1,5 +1,5 @@
 {
-    "name": "连连看",
+    "name": "处方应付",
     "xwalk_version": "0.0.0.1",
     "start_url": "index.html",
     "xwalk_hosts": [
