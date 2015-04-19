@@ -1,4 +1,4 @@
-(ns lianliankan.handler
+(ns chufang.handler
     (:require [compojure.core :refer [GET defroutes]]
               [compojure.route :as route :refer [not-found resources files]]
               [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
@@ -33,10 +33,10 @@
         [:shared-appender-config :rotor]
         {:path "production.log" :max-size (* 1024 1024) :backlog 100})
 
-    (timbre/info "lianliankan Server is starting"))
+    (timbre/info "chufang Server is starting"))
 
 (defn destroy []
-    (timbre/info "lianliankan Server is shutting down"))
+    (timbre/info "chufang Server is shutting down"))
 
 
 (defapi app-routes

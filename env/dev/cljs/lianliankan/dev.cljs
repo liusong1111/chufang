@@ -1,9 +1,9 @@
-(ns ^:figwheel-no-load lianliankan.dev
+(ns ^:figwheel-no-load chufang.dev
   (:require
             [figwheel.client :as figwheel :include-macros true]
             [weasel.repl :as weasel]
             [reagent.core :as r]
-            [lianliankan.widgets :as widgets]
+            [chufang.widgets :as widgets]
             )
     )
 

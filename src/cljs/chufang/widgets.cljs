@@ -1,6 +1,6 @@
-(ns lianliankan.widgets
+(ns chufang.widgets
     (:require [reagent.core :as reagent :refer [atom]]
-              [lianliankan.data :as data]
+              [chufang.data :as data]
               ;[cljsjs.react :as React]
               ))
 

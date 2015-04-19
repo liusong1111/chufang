@@ -1,4 +1,4 @@
-(ns lianliankan.dev
+(ns chufang.dev
   (:require [cemerick.piggieback :as piggieback]
             [weasel.repl.websocket :as weasel]
             [leiningen.core.main :as lein]))

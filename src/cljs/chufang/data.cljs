@@ -1,4 +1,4 @@
-(ns lianliankan.data
+(ns chufang.data
     )
 
 (def data
