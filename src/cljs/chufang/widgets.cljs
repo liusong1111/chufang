@@ -8,18 +8,21 @@
 ; for layout
 (def recipe-size (atom 100))
 (def img-size (atom 100))
+(def recipe-adjust-height (atom 100))
 
 ; layout!
 (defn layout! []
     (let [body (-> js/document .-body)
           w (.-clientWidth body)
           h (- (.-clientHeight body) 60)
-
-          -recipe-size (quot w 2)
-          -img-size (- (quot w 4) 10)
+          s (min w h)
+          -recipe-adjust-height (if (> w h) -100 100)
+          -recipe-size (quot s 2)
+          -img-size (- (quot s 4) 10)
           ]
         (reset! img-size -img-size)
         (reset! recipe-size -recipe-size)
+        (reset! recipe-adjust-height -recipe-adjust-height)
         )
     )
 
@@ -157,35 +160,39 @@
     )
 
 (defn recipe-view []
-    [:div.recipe
+    [:div.recipe-container
      {
       :style {
               :display        "tabel-cell"
               :vertical-align "top"
+              :align          "center"
               :width          @recipe-size
-              :height         (+ (* @img-size 3) 20)
+              :height         (+ (* @img-size 3) @recipe-adjust-height)
               }
       }
-     [:span.recipe-name (:recipe @current-recipe)]
-     [:span.source (if (:source @current-recipe) (str "︽" (:source @current-recipe) "︾") "")]
-     [:span.slices
-      [:span.field-name "︻组成︼"]
-      [:span
-       (interpose
-           "，"
-           (for [slice (:slices @current-recipe)]
-               ^{:key (:slice-name slice)}
-               [:span.slice
-                [:span.slice-name (:slice-name slice)]
-                [:span.dosage (:dosage slice)]
-                ]
-               ))
+     [:div.recipe
+      [:span.recipe-name (:recipe @current-recipe)]
+      [:span.source (if (:source @current-recipe) (str "︽" (:source @current-recipe) "︾") "")]
+      [:span.slices
+       [:span.field-name "︻组成︼"]
+       [:span
+        (interpose
+            "，"
+            (for [slice (:slices @current-recipe)]
+                ^{:key (:slice-name slice)}
+                [:span.slice
+                 [:span.slice-name (:slice-name slice)]
+                 [:span.dosage (:dosage slice)]
+                 ]
+                ))
+        ]
+       ]
+      [:span.treat
+       [:span.field-name "︻功用主治︼"]
+       [:span (:treat @current-recipe)]
        ]
       ]
-     [:span.treat
-      [:span.field-name "︻功用主治︼"]
-      [:span (:treat @current-recipe)]
-      ]
+
      ]
     )
 
