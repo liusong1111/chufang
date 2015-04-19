@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>药品连连看</title>
+    <title>处方应付</title>
 
     <!-- Sets initial viewport load and disables zooming  -->
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
@@ -14,7 +14,6 @@
     <!-- Include the compiled Ratchet CSS -->
     <link href="css/ratchet.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
 
     <!--[if lt IE 9]>
     <script src="es5-shim.js"></script>
@@ -22,39 +21,6 @@
     <script src="html5shiv.js"></script>
     <script src="html5shiv-printshiv.js"></script>
     <![endif]-->
-
-    <style>
-
-
-        #matrix .items {
-            /*-webkit-column-count: 4;*/
-            /*column-count: 4;*/
-        }
-
-        #matrix .items .item {
-            height: 100px;
-            z-index: 1;
-            border: 2px solid transparent;
-        }
-
-        #matrix .items .item.selected {
-            border-color: #f00;
-        }
-
-        .description {
-            font-size: 12px;
-        }
-
-        .field {
-            font-weight: bold;
-            color: #00f;
-        }
-
-        .field.name {
-            color: #f00;
-            font-size: 120%;
-        }
-    </style>
 </head>
 <body>
 <div id="main">

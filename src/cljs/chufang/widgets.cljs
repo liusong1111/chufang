@@ -1,126 +1,141 @@
 (ns chufang.widgets
     (:require [reagent.core :as reagent :refer [atom]]
               [chufang.data :as data]
-              ;[cljsjs.react :as React]
               ))
 
-; for animation
-;(def css-transition-group
-;    (reagent/adapt-react-class js/React.addons.CSSTransitionGroup))
 
-;(def animation-style "
-;.foo-enter {
-;  height: 0;
-;  transition: height 0.27s ease-out;
-;}
-;
-;.foo-leave {
-;  height: 0;
-;  transition: height 0.27s ease-out;
-;}
-;
-;.foo-enter-active {
-;  height: 2em;
-;  opacity: 1;
-;}")
 
 ; for layout
-(def pair-capacity (atom 16))
-(def item-size (atom 100))
-(def description-style (atom {}))
-(def content-style (atom {}))
+;(def item-size (atom 100))
+;(def content-style (atom {}))
 
 ; layout!
-(defn layout! []
-    (let [body (-> js/document .-body)
-          w (.-clientWidth body)
-          h (- (.-clientHeight body) 60)
-
-          ;w (- w (* 3 12))
-          img-size (quot (min w h) 4)
-          -pair-capacity (* 2 (if (> w h) 4 (quot (- h 200) img-size)))
-          ]
-        (reset! item-size img-size)
-        (if (> h w)
-            (reset! description-style {
-                                       :height   200
-                                       :width    "100%"
-                                       :bottom   0
-                                       :position "fixed"
-                                       })
-            (do
-                (reset! description-style {
-                                           :height "100%"
-                                           :width  (- w (* img-size 4))
-                                           :top    44
-                                           :left   (* img-size 4)
-
-                                           })
-                (reset! content-style {
-                                       :padding-right (- w (* img-size 4))
-                                       })
-                )
-            )
-        (reset! pair-capacity -pair-capacity)
-        )
-    )
+;(defn layout! []
+;    (let [body (-> js/document .-body)
+;          w (.-clientWidth body)
+;          h (- (.-clientHeight body) 60)
+;
+;          ;w (- w (* 3 12))
+;          img-size (quot (min w h) 4)
+;          -pair-capacity (* 2 (if (> w h) 4 (quot (- h 200) img-size)))
+;          ]
+;        (reset! item-size img-size)
+;        (if (> h w)
+;            (reset! description-style {
+;                                       :height   200
+;                                       :width    "100%"
+;                                       :bottom   0
+;                                       :position "fixed"
+;                                       })
+;            (do
+;                (reset! description-style {
+;                                           :height "100%"
+;                                           :width  (- w (* img-size 4))
+;                                           :top    44
+;                                           :left   (* img-size 4)
+;
+;                                           })
+;                (reset! content-style {
+;                                       :padding-right (- w (* img-size 4))
+;                                       })
+;                )
+;            )
+;        (reset! pair-capacity -pair-capacity)
+;        )
+;    )
 
 
 ;store
-(def items (atom []))
-(def selected-item (atom nil))
+(def recipes (atom []))
+(def current-recipe (atom nil))
+(def selected-slices (atom []))
+(def optional-slices (atom []))
+
+(def result (atom :undecided))
+
 (def timing (atom 0))
 (def timing-ref (atom nil))
 
-(defn ^:export new-game []
-    (reset! items (data/sample-data @pair-capacity))
-    (reset! selected-item nil)
+(defn gen-optional-slices []
+    (let [count-of-selected (count @selected-slices)
+          slices (:slices @current-recipe)
+          count-of-slices (count slices)
+          ]
+        (if (>= count-of-selected count-of-slices)
+            []
+            (let [slice (slices count-of-selected)
+                  {:keys [slice-name slice-filename option-slice option-slice-filename]} slice
+                  options [{
+                            :slice-name     slice-name
+                            :slice-filename slice-filename
+                            }
+                           {
+                            :slice-name     option-slice
+                            :slice-filename option-slice-filename
+                            }
+                           ]
+                  options (remove #(clojure.string/blank? (:slice-name %)) options)
+                  options (shuffle options)
+                  ]
+                options
+                )
+            )
+
+        )
+    )
+
+(defn reset-game! []
+    (reset! selected-slices [])
+    (reset! optional-slices (gen-optional-slices))
+    (reset! result :undecided)
 
     (reset! timing 0)
     (js/clearInterval @timing-ref)
     (reset! timing-ref (js/setInterval #(swap! timing inc) 1000))
     )
 
-; nil
-(defn nil-item []
-    {:name (rand) :treat "无" :form "无" :blank true}
-    )
-
-(defn check-all-clear []
-    (when (every? #(:blank %) @items)
-        (js/clearInterval @timing-ref)
+(defn new-game! []
+    (if (empty? @recipes)
+        (reset! recipes (data/sample-data))
         )
+
+    (reset! current-recipe (first @recipes))
+    (reset! recipes (rest @recipes))
+
+    (reset-game!)
     )
 
-(defn on-item-click [item]
-    (let [s @selected-item
-          is-paired? (data/paired? (:name item) (:name s))
+(defn retry-game! []
+    (reset-game!)
+    )
+
+(defn slice-img-src [slice]
+    (if (nil? slice) "blank.jpg" (str "pics/" (:recipe-filename @current-recipe) "/" (:slice-filename slice) ".jpg"))
+    )
+
+(defn selected-slice-view [selected-slice slice]
+    [:div.selected-slice
+     {
+      :style {
+              :position "relative"
+              }
+      }
+     [:img.slice
+      {
+       :src (slice-img-src selected-slice)
+       }]
+     (if (and (= @result :fail) (not (= (:slice-name selected-slice) (:slice-name slice))))
+         [:div
+          {
+           :style {
+                   :position "absolute"
+                   }
+           }
+          "X"
           ]
-        (reset! selected-item item)
-        ;(println "matching:" (:name item) "-" (:name s) "-" is-paired?)
-        (when is-paired?
-            ;(println "matched:" (:name item) "-" (:name s))
-            (reset! items (replace {s (nil-item) item (nil-item)} @items))
-            )
-        (check-all-clear)
-        )
-
+         )
+     ]
     )
-
-(defn item-view [item]
-    [:img.item {
-                :src      (if (:blank item) "blank.jpg" (str "pics/" (:filename item) ".jpg"))
-                :on-click #(on-item-click item)
-                :class    (if (= item @selected-item) "selected")
-                :style    {
-                           :width  @item-size
-                           :height @item-size
-                           }
-                }]
-    )
-
-
-
 
 (defn timing-readable [timing]
     (let [hours (quot timing 3600)
@@ -136,101 +151,121 @@
     )
 
 (defn timing-view []
-    (if (pos? @timing)
-        [:a.btn.btn-link.pull-left "耗时："
-         (timing-readable @timing)
-         ]
+    [:a.btn.btn-link.pull-left "耗时："
+     (timing-readable @timing)
+     ]
+    )
+
+(defn recipe-view []
+    [:div.recipe
+     [:span.recipe-name (:recipe @current-recipe)]
+     [:span.source (if (:source @current-recipe) (str "︽" (:source @current-recipe) "︾") "")]
+     [:span.slices
+      [:span.field-name "【组成】"]
+      [:span
+       (interpose
+           "，"
+           (for [slice (:slices @current-recipe)]
+               [:span.slice
+                [:span.slice-name (:slice-name slice)]
+                [:span.dosage (:dosage slice)]
+                ]
+               ))
+       ]
+      ]
+     [:span.treat
+      [:span.field-name "【功用主治】"]
+      [:span (:treat @current-recipe)]
+      ]
+     ]
+    )
+
+(defn selected-slices-view []
+    [:div.selected-slices
+     (for [select-index (range (count (:slices @current-recipe)))]
+         (let [selected-slice (get @selected-slices select-index)
+               slice (get (:slices @current-recipe) select-index)
+               ]
+             ;^{:key (:slice-name selected-slice)}
+             [selected-slice-view selected-slice slice]
+             )
+         )
+     ]
+    )
+
+(defn on-select-option [optional-slice]
+    (swap! selected-slices conj optional-slice)
+    (reset! optional-slices (gen-optional-slices))
+    (let [selected-count (count @selected-slices)
+          slice-count (count (:slices @current-recipe))
+          ]
+        (when (>= selected-count slice-count)
+            (js/clearInterval @timing-ref)
+            (let [selected-slice-names (map :slice-name @selected-slices)
+                  slice-names (map :slice-name (:slices @current-recipe))
+                  ok (= selected-slice-names slice-names)
+                  r (if ok :success :fail)
+                  ]
+                (reset! result r)
+                )
+            )
         )
     )
 
-(defn game-summary []
-    [:div
-     {:style {
-              :text-align "center"
-              }
-      }
-     [:h1
-      {:style {
-               :margin "20px auto"
-               :color  "#00f"
-               }
-       }
-      "恭喜通过！"]
-     [:h2
-      {:style {
-               :margin    "20px auto"
-               :color     "#666"
-               :font-size 16
-               }
-       }
-      "共耗时" (timing-readable @timing)]
-     [:button.btn.btn-block.btn-negative
-      {:on-click new-game}
-      "再来一局"
-      ]
+(defn options-view []
+    [:div.options
+     (for [optional-slice @optional-slices]
+         [:img.optional-slice
+          {
+           :src      (slice-img-src optional-slice)
+           :on-click #(on-select-option on-select-option)
+           }
+          ]
+         )
      ]
     )
-
-(defn matrix-view []
-    [:div
-     ;[:style animation-style]
-     [:div.items
-      {
-       :style {
-               :width (* @item-size 4)
-               }
-       }
-      ;[css-transition-group {:transition-name "foo"}
-       (for [item @items]
-           ^{:key (:name item)} [item-view item]
-           )
-       ;]
-      ]
+(defn result-view []
+    [:div.result
+     (case @result
+         :undecided nil
+         :success [:div
+                   "共耗时" (timing-readable @timing)
+                   [:span "正确"]
+                   [:button.btn.btn-primary
+                    {
+                     :on-click new-game!
+                     }
+                    "下一关"]
+                   ]
+         :fail [:div
+                [:span "错误"]
+                [:button.btn.btn-negative
+                 {
+                  :on-click retry-game!
+                  }
+                 "重来"]
+                ]
+         )
      ]
-
     )
 
 
 (defn page-main []
     [:div
      [:header.bar.bar-nav
-      [:h1.title "药品连连看"]
-      (if (pos? @timing)
-          [timing-view]
-          )
+      [:h1.title "处方应付"]
+      [timing-view]
       [:a.btn.btn-nav.btn-negative.pull-right
        {
-        :on-click new-game
+        :on-click new-game!
         }
        "重开一局"]
       ]
-     (if (and @selected-item (not (:blank @selected-item)))
-         [:nav.bar.bar-tab.description
-          {
-           :style @description-style
-           }
-          [:span.field.name (:name @selected-item)]
-          [:div
-           [:span.field "功能主治："]
-           [:span.treat (:treat @selected-item)]
-           ]
-          [:div
-           [:span.field "性状："]
-           [:span.form (:form @selected-item)]
-           ]
-          ]
-         )
-
      [:div.content
-      {
-       :style @content-style
-       }
-      [:div#matrix
-       (if (every? #(:blank %) @items)
-           [game-summary]
-           [matrix-view]
-           )
-       ]
+      [recipe-view]
+      [selected-slices-view]
+      [options-view]
+      [result-view]
       ]
      ]
     )
@@ -239,6 +274,6 @@
     (let [ele (.getElementById js/document "main")]
         (reagent/render-component [page-main] ele)
         )
-    (layout!)
-    (new-game)
+    ;(layout!)
+    (new-game!)
     )
