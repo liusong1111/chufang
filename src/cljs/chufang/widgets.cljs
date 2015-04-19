@@ -6,43 +6,22 @@
 
 
 ; for layout
-;(def item-size (atom 100))
-;(def content-style (atom {}))
+(def recipe-size (atom 100))
+(def img-size (atom 100))
 
 ; layout!
-;(defn layout! []
-;    (let [body (-> js/document .-body)
-;          w (.-clientWidth body)
-;          h (- (.-clientHeight body) 60)
-;
-;          ;w (- w (* 3 12))
-;          img-size (quot (min w h) 4)
-;          -pair-capacity (* 2 (if (> w h) 4 (quot (- h 200) img-size)))
-;          ]
-;        (reset! item-size img-size)
-;        (if (> h w)
-;            (reset! description-style {
-;                                       :height   200
-;                                       :width    "100%"
-;                                       :bottom   0
-;                                       :position "fixed"
-;                                       })
-;            (do
-;                (reset! description-style {
-;                                           :height "100%"
-;                                           :width  (- w (* img-size 4))
-;                                           :top    44
-;                                           :left   (* img-size 4)
-;
-;                                           })
-;                (reset! content-style {
-;                                       :padding-right (- w (* img-size 4))
-;                                       })
-;                )
-;            )
-;        (reset! pair-capacity -pair-capacity)
-;        )
-;    )
+(defn layout! []
+    (let [body (-> js/document .-body)
+          w (.-clientWidth body)
+          h (- (.-clientHeight body) 60)
+
+          -recipe-size (quot w 2)
+          -img-size (- (quot w 4) 10)
+          ]
+        (reset! img-size -img-size)
+        (reset! recipe-size -recipe-size)
+        )
+    )
 
 
 ;store
@@ -50,43 +29,42 @@
 (def current-recipe (atom nil))
 (def selected-slices (atom []))
 (def optional-slices (atom []))
+(def current-slice (atom nil))
 
 (def result (atom :undecided))
 
 (def timing (atom 0))
 (def timing-ref (atom nil))
 
-(defn gen-optional-slices []
+(defn gen-optional-slices! []
     (let [count-of-selected (count @selected-slices)
           slices (:slices @current-recipe)
           count-of-slices (count slices)
+          slice (get slices count-of-selected)
+          options (let [{:keys [slice-name slice-filename option-slice option-slice-filename]} slice
+                        options [{
+                                  :slice-name     slice-name
+                                  :slice-filename slice-filename
+                                  }
+                                 {
+                                  :slice-name     option-slice
+                                  :slice-filename option-slice-filename
+                                  }
+                                 ]
+                        options (remove #(clojure.string/blank? (:slice-name %)) options)
+                        options (shuffle options)
+                        ]
+                      options
+                      )
           ]
-        (if (>= count-of-selected count-of-slices)
-            []
-            (let [slice (slices count-of-selected)
-                  {:keys [slice-name slice-filename option-slice option-slice-filename]} slice
-                  options [{
-                            :slice-name     slice-name
-                            :slice-filename slice-filename
-                            }
-                           {
-                            :slice-name     option-slice
-                            :slice-filename option-slice-filename
-                            }
-                           ]
-                  options (remove #(clojure.string/blank? (:slice-name %)) options)
-                  options (shuffle options)
-                  ]
-                options
-                )
-            )
-
+        (reset! optional-slices options)
+        (reset! current-slice slice)
         )
     )
 
 (defn reset-game! []
     (reset! selected-slices [])
-    (reset! optional-slices (gen-optional-slices))
+    (gen-optional-slices!)
     (reset! result :undecided)
 
     (reset! timing 0)
@@ -110,29 +88,51 @@
     )
 
 (defn slice-img-src [slice]
-    (if (nil? slice) "blank.jpg" (str "pics/" (:recipe-filename @current-recipe) "/" (:slice-filename slice) ".jpg"))
+    ;(if (nil? slice) "blank.jpg" (str "pics/" (:recipe-filename @current-recipe) "/" (:slice-filename slice) ".jpg"))
+    (if (nil? slice) "blank.jpg" (str "pics/" (:recipe @current-recipe) "/" (:slice-name slice) ".jpg"))
     )
 
 (defn selected-slice-view [selected-slice slice]
     [:div.selected-slice
      {
       :style {
-              :position "relative"
+              :position     "relative"
+              :display      "inline-block"
+              :width        @img-size
+              :height       @img-size
+              :margin-right 4
               }
       }
      [:img.slice
       {
-       :src (slice-img-src selected-slice)
+       :src   (slice-img-src selected-slice)
+       :style {
+               :width  @img-size
+               :height @img-size
+               }
        }]
      (if (and (= @result :fail) (not (= (:slice-name selected-slice) (:slice-name slice))))
+
          [:div
           {
            :style {
-                   :position "absolute"
+                   :position    "absolute"
+                   :left        "50%"
+                   :top         "50%"
+                   :z-index     1
+                   :margin-left -25
+                   :margin-top  -25
+                   :opacity     0.6
                    }
            }
-          "X"
+          [:i.icon.fa.fa-times {
+                                :style {
+                                        :color     "#f00"
+                                        :font-size 50
+                                        }
+                                }]
           ]
+
          )
      ]
     )
@@ -158,14 +158,23 @@
 
 (defn recipe-view []
     [:div.recipe
+     {
+      :style {
+              :display        "tabel-cell"
+              :vertical-align "top"
+              :width          @recipe-size
+              :height         (+ (* @img-size 3) 20)
+              }
+      }
      [:span.recipe-name (:recipe @current-recipe)]
      [:span.source (if (:source @current-recipe) (str "︽" (:source @current-recipe) "︾") "")]
      [:span.slices
-      [:span.field-name "【组成】"]
+      [:span.field-name "︻组成︼"]
       [:span
        (interpose
            "，"
            (for [slice (:slices @current-recipe)]
+               ^{:key (:slice-name slice)}
                [:span.slice
                 [:span.slice-name (:slice-name slice)]
                 [:span.dosage (:dosage slice)]
@@ -174,7 +183,7 @@
        ]
       ]
      [:span.treat
-      [:span.field-name "【功用主治】"]
+      [:span.field-name "︻功用主治︼"]
       [:span (:treat @current-recipe)]
       ]
      ]
@@ -182,20 +191,30 @@
 
 (defn selected-slices-view []
     [:div.selected-slices
-     (for [select-index (range (count (:slices @current-recipe)))]
-         (let [selected-slice (get @selected-slices select-index)
-               slice (get (:slices @current-recipe) select-index)
-               ]
-             ;^{:key (:slice-name selected-slice)}
-             [selected-slice-view selected-slice slice]
-             )
-         )
+     {
+      :style {
+              :display        "table-cell"
+              :vertical-align "top"
+              :width          @recipe-size
+              :height         @recipe-size
+              :padding-top    6
+              }
+      }
+     (doall (for [select-index (range (count (:slices @current-recipe)))]
+                (let [selected-slice (get @selected-slices select-index)
+                      slice (get (:slices @current-recipe) select-index)
+                      ]
+                    ^{:key (:slice-name (or selected-slice slice))}
+                    [selected-slice-view selected-slice slice]
+                    )
+                ))
+
      ]
     )
 
 (defn on-select-option [optional-slice]
     (swap! selected-slices conj optional-slice)
-    (reset! optional-slices (gen-optional-slices))
+    (gen-optional-slices!)
     (let [selected-count (count @selected-slices)
           slice-count (count (:slices @current-recipe))
           ]
@@ -214,36 +233,90 @@
 
 (defn options-view []
     [:div.options
-     (for [optional-slice @optional-slices]
-         [:img.optional-slice
+     {
+      :style {
+              :display        "table-cell"
+              :vertical-align "top"
+              }
+      }
+     (if (not (empty? @optional-slices))
+         [:div
           {
-           :src      (slice-img-src optional-slice)
-           :on-click #(on-select-option on-select-option)
+           :style {
+                   :font-size 14
+                   }
            }
+          "请从中选择："
+          [:span
+           {
+            :style {
+                    :font-size   16
+                    :font-weight "bold"
+                    :color       "#00f"
+                    }
+            }
+           (:slice-name @current-slice)]
           ]
          )
+     (doall (for [optional-slice @optional-slices]
+                ^{:key (:slice-name optional-slice)}
+                [:img.optional-slice
+                 {
+                  :src      (slice-img-src optional-slice)
+                  :on-click #(on-select-option optional-slice)
+                  :style    {
+                             :width        @img-size
+                             :height       @img-size
+                             :margin-right 4
+                             }
+                  }
+                 ]
+                ))
      ]
     )
 (defn result-view []
     [:div.result
+     {
+      :style {
+              :display        "table-cell"
+              :vertical-align "top"
+              :padding-top    20
+              :text-align     "center"
+              }
+      }
      (case @result
          :undecided nil
          :success [:div
-                   "共耗时" (timing-readable @timing)
-                   [:span "正确"]
-                   [:button.btn.btn-primary
+                   [:span
+                    {
+                     :style {
+                             :color "#333"
+                             }
+                     }
+                    "共耗时" (timing-readable @timing)]
+                   [:br]
+                   [:button.btn.btn-block.btn-primary
                     {
                      :on-click new-game!
                      }
-                    "下一关"]
+                    [:i.fa.fa-thumbs-up]
+                    " 正确，下一关"]
                    ]
          :fail [:div
-                [:span "错误"]
-                [:button.btn.btn-negative
+                [:span
+                 {
+                  :style {
+                          :color "#333"
+                          }
+                  }
+                 "共耗时" (timing-readable @timing)]
+                [:br]
+                [:button.btn.btn-block.btn-negative
                  {
                   :on-click retry-game!
                   }
-                 "重来"]
+                 [:i.fa.fa-thumbs-down]
+                 " 错误，再来一次"]
                 ]
          )
      ]
@@ -262,10 +335,24 @@
        "重开一局"]
       ]
      [:div.content
-      [recipe-view]
-      [selected-slices-view]
-      [options-view]
-      [result-view]
+      [:div {
+             :style {
+                     :display "table-row"
+                     }
+             }
+       [recipe-view]
+       [selected-slices-view]
+       ]
+
+      [:div {
+             :style {
+                     :display "table-row"
+                     }
+             }
+       [options-view]
+       [result-view]
+       ]
+
       ]
      ]
     )
@@ -274,6 +361,6 @@
     (let [ele (.getElementById js/document "main")]
         (reagent/render-component [page-main] ele)
         )
-    ;(layout!)
+    (layout!)
     (new-game!)
     )
